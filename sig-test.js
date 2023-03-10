@@ -20,15 +20,6 @@ let hash = ethers.solidityPackedKeccak256(['bytes'],
 let operatorSig = operatorSigningKey.sign(hash);
 console.log(operatorSig.serialized);
 
-// sign unlock
-m4m_token_id = 123123;
-let out_component_ids = [5]
-hash = ethers.solidityPackedKeccak256(['bytes'],
-    [ethers.solidityPacked(['uint', 'uint', `uint[${out_component_ids.length}]`],
-        [m4m_token_id, gameId, out_component_ids])]);
-operatorSig = operatorSigningKey.sign(hash);
-console.log(operatorSig.serialized);
-
 // sign settle
 lootIds = [6];
 lootAmounts = [1];
@@ -38,5 +29,15 @@ let nonce = 1;
 hash = ethers.solidityPackedKeccak256(['bytes'],
     [ethers.solidityPacked(['uint', 'uint', 'uint', 'uint[1]', 'uint[1]', 'uint[1]', 'uint[1]'],
         [m4m_token_id, gameId, nonce, lootIds, lootAmounts, lostIds, lostAmounts])]);
+operatorSig = operatorSigningKey.sign(hash);
+console.log(operatorSig.serialized);
+
+// sign unlock
+m4m_token_id = 123123;
+let out_component_ids = [5]
+nonce = 2;
+hash = ethers.solidityPackedKeccak256(['bytes'],
+    [ethers.solidityPacked(['uint', 'uint', 'uint', `uint[${out_component_ids.length}]`],
+        [m4m_token_id, nonce, gameId, out_component_ids])]);
 operatorSig = operatorSigningKey.sign(hash);
 console.log(operatorSig.serialized);

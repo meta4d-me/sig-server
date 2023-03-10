@@ -63,6 +63,39 @@ returns:
 >
 > success: tx is successful or reverted
 
+### Query Locked Status
+
+Query tx status.
+
+Method: GET
+
+URL: /api/v1/components/locked?m4m_token_id=xxx&chain_name=xxx&component_ids=xxx
+
+> note: component_ids should split with ',', for example: "1,2,3,4,5"
+
+returns:
+
+```json
+{
+  "code": 0,
+  "err": "",
+  "data": {
+    "game_id": 1,
+    "owner": "owner address",
+    "used_nonce": 1,
+    "locked_amounts": [
+      1,
+      1,
+      1,
+      1,
+      1
+    ]
+  }
+}
+```
+
+> locked_amounts is corresponding param `component_ids` 1 by 1
+
 ### Signature interface
 
 > note: if component id or amounts is too large, maybe use string type to pass these params.
@@ -78,10 +111,26 @@ params:
 ```json
 {
   "m4m_token_id": "123123123123123",
-  "loot_ids": [1212,1213,1214],
-  "loot_amounts": [1,2,3],
-  "lost_ids": [1214,1216,1217],
-  "lost_amounts": [1,2,3]
+  "loot_ids": [
+    1212,
+    1213,
+    1214
+  ],
+  "loot_amounts": [
+    1,
+    2,
+    3
+  ],
+  "lost_ids": [
+    1214,
+    1216,
+    1217
+  ],
+  "lost_amounts": [
+    1,
+    2,
+    3
+  ]
 }
 ```
 
@@ -95,7 +144,6 @@ returns:
 }
 ```
 
-
 ### Sign unlockComponents
 
 Method: POST
@@ -107,6 +155,7 @@ params:
 ```json
 {
   "m4m_token_id": "123123123123123",
+  "nonce": 1,
   "out_component_ids": [
     1212,
     1213,

@@ -36,6 +36,10 @@ class SigController extends Controller {
     async sigUnlockComponents() {
         const {ctx} = this;
         let param = ctx.request.body;
+        if (!param.nonce){
+            ctx.body = newResp(RESP_CODE_ILLEGAL_PARAM,'nonce required',{})
+            return
+        }
         let chainCfg = this.config[param.chain_name ? param.chain_name : CHAIN_NAME_MUMBAI];
         let provider = new ethers.JsonRpcProvider(chainCfg.nodeUrl);
         let m4mBaggage = new Contract(chainCfg.baggageContract, M4mBaggage.abi, provider);
@@ -43,8 +47,8 @@ class SigController extends Controller {
         let info = await m4mBaggage.lockedEmptyNFTs(param.m4m_token_id);
         console.log(info);
         let hash = ethers.solidityPackedKeccak256(['bytes'],
-            [ethers.solidityPacked(['uint', 'uint', `uint[${param.out_component_ids.length}]`],
-                [param.m4m_token_id, info.gameId, param.out_component_ids])]);
+            [ethers.solidityPacked(['uint', 'uint', 'uint', `uint[${param.out_component_ids.length}]`],
+                [param.m4m_token_id, param.nonce, info.gameId, param.out_component_ids])]);
         let operatorSig = operatorSigningKey.sign(hash);
         ctx.body = newNormalResp(operatorSig.serialized);
     }
@@ -53,6 +57,10 @@ class SigController extends Controller {
     async sigSettleLoots() {
         const {ctx} = this;
         let param = ctx.request.body;
+        if (!param.nonce){
+            ctx.body = newResp(RESP_CODE_ILLEGAL_PARAM,'nonce required',{})
+            return
+        }
         let lootLength = param.loot_ids.length;
         let lostLength = param.lost_ids.length;
         if (lootLength !== param.loot_amounts.length || lostLength !== param.lost_amounts.length) {
