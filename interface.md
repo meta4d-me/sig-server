@@ -219,6 +219,50 @@ returns:
 }
 ```
 
+### Sign Wrap Prepare And Mint
+
+Method: POST
+
+URL: /api/v1/sign/prepare-mint
+
+params:
+
+```json
+{
+  "m4m_token_id": "123123123123123",
+  "nonce": 2,
+  "params": [
+    {
+      "tokenId": 21,
+      "prepare": true,
+      "name": "test 2",
+      "symbol": "test symbol 2",
+      "amount": 1
+    },
+    {
+      "tokenId": 22,
+      "prepare": false,
+      "name": "",
+      "symbol": "",
+      "amount": 1
+    }
+  ]
+}
+```
+
+> note: if params.prepare is true, prepare new component, if params.prepare is false, params.name and params.symbol must
+> be ''
+
+returns:
+
+```json
+{
+  "code": 0,
+  "err": "",
+  "data": "0x12123121312"
+}
+```
+
 ### Sign Message
 
 Method: GET

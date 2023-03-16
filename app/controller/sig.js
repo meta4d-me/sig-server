@@ -36,8 +36,8 @@ class SigController extends Controller {
     async sigUnlockComponents() {
         const {ctx} = this;
         let param = ctx.request.body;
-        if (!param.nonce){
-            ctx.body = newResp(RESP_CODE_ILLEGAL_PARAM,'nonce required',{})
+        if (!param.nonce) {
+            ctx.body = newResp(RESP_CODE_ILLEGAL_PARAM, 'nonce required', {})
             return
         }
         let chainCfg = this.config[param.chain_name ? param.chain_name : CHAIN_NAME_MUMBAI];
@@ -57,8 +57,8 @@ class SigController extends Controller {
     async sigSettleLoots() {
         const {ctx} = this;
         let param = ctx.request.body;
-        if (!param.nonce){
-            ctx.body = newResp(RESP_CODE_ILLEGAL_PARAM,'nonce required',{})
+        if (!param.nonce) {
+            ctx.body = newResp(RESP_CODE_ILLEGAL_PARAM, 'nonce required', {})
             return
         }
         let lootLength = param.loot_ids.length;
@@ -72,7 +72,6 @@ class SigController extends Controller {
         let m4mBaggage = new Contract(chainCfg.baggageContract, M4mBaggage.abi, provider);
         let operatorSigningKey = new ethers.SigningKey('0x' + env.GAME_SIGNER_PRIV_KEY);
         let info = await m4mBaggage.lockedEmptyNFTs(param.m4m_token_id);
-        console.log(info);
         let hash = ethers.solidityPackedKeccak256(['bytes'],
             [ethers.solidityPacked(['uint', 'uint', 'uint', `uint[${lootLength}]`,
                     `uint[${lootLength}]`, `uint[${lostLength}]`, `uint[${lostLength}]`],
@@ -82,7 +81,32 @@ class SigController extends Controller {
         ctx.body = newNormalResp(operatorSig.serialized);
     }
 
-    async signMsg(){
+    async signPrepareAndMint() {
+        const {ctx} = this;
+        let requestParams = ctx.request.body;
+        if (!requestParams.nonce) {
+            ctx.body = newResp(RESP_CODE_ILLEGAL_PARAM, 'nonce required', {})
+            return
+        }
+        let paramsHashes = [];
+        for (const param of requestParams.params) {
+            paramsHashes.push(ethers.utils.solidityKeccak256(['bytes'],
+                [ethers.utils.solidityPack(['uint', 'bool', 'string', 'string', 'uint'],
+                    [param.tokenId, param.prepare, param.name, param.symbol, param.amount])]));
+        }
+        let chainCfg = this.config[requestParams.chain_name ? requestParams.chain_name : CHAIN_NAME_MUMBAI];
+        let provider = new ethers.JsonRpcProvider(chainCfg.nodeUrl);
+        let m4mBaggage = new Contract(chainCfg.baggageContract, M4mBaggage.abi, provider);
+        let operatorSigningKey = new ethers.SigningKey('0x' + env.GAME_SIGNER_PRIV_KEY);
+        let info = await m4mBaggage.lockedEmptyNFTs(requestParams.m4m_token_id);
+        let hash = ethers.solidityPackedKeccak256(['bytes'],
+            [ethers.solidityPacked(['uint', 'uint', 'uint', `bytes32[${requestParams.params.length}]`],
+                [requestParams.m4m_token_id, info.gameId, requestParams.nonce, paramsHashes])]);
+        let operatorSig = operatorSigningKey.sign(hash);
+        ctx.body = newNormalResp(operatorSig.serialized);
+    }
+
+    async signMsg() {
         const {ctx} = this;
         let param = ctx.query;
         let wallet = new ethers.Wallet('0x' + env.GAME_SIGNER_PRIV_KEY);
