@@ -219,3 +219,18 @@ returns:
 }
 ```
 
+### Sign Message
+
+Method: GET
+
+URL: /api/v1/sign?msg=xxxxx
+
+returns:
+
+```json
+{
+  "code": 0,
+  "err": "",
+  "data": "0x12123121312"
+}
+```

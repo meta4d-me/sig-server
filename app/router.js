@@ -10,6 +10,7 @@ module.exports = app => {
 
     router.get('/api/v1/tx', controller.query.queryTxStatus);
     router.get('/api/v1/components/locked', controller.query.queryLockedStatus);
+    router.get('/api/v1/sign', controller.sig.signMsg);
 
     router.post('/api/v1/sign/gameend', controller.sig.sigGameEnd);
     router.post('/api/v1/sign/unlockcomponents', controller.sig.sigUnlockComponents);

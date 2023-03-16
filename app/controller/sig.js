@@ -81,6 +81,14 @@ class SigController extends Controller {
         let operatorSig = operatorSigningKey.sign(hash);
         ctx.body = newNormalResp(operatorSig.serialized);
     }
+
+    async signMsg(){
+        const {ctx} = this;
+        let param = ctx.query;
+        let wallet = new ethers.Wallet('0x' + env.GAME_SIGNER_PRIV_KEY);
+        let sig = await wallet.signMessage(param.msg);
+        ctx.body = newNormalResp(sig);
+    }
 }
 
 module.exports = SigController;

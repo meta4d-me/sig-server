@@ -25,7 +25,7 @@
     "node": ">=16.0.0"
   },
   "scripts": {
-    "start": "egg-scripts start --daemon --title=egg-server-m4m-sig-server --stdout=./logs/master-stdout.log --stderr=./logs/master-stderr.log",
+    "start": "egg-scripts start --daemon --title=egg-server-m4m-sig-server --stdout=./logs/master-stdout.log --stderr=./logs/master-stderr.log --port=7001",
     "stop": "egg-scripts stop --title=egg-server-m4m-sig-server",
     "dev": "egg-bin dev --stdout=./logs/master-stdout.log --stderr=./logs/master-stderr.log",
     "debug": "egg-bin debug",
