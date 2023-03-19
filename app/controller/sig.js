@@ -90,8 +90,8 @@ class SigController extends Controller {
         }
         let paramsHashes = [];
         for (const param of requestParams.params) {
-            paramsHashes.push(ethers.utils.solidityKeccak256(['bytes'],
-                [ethers.utils.solidityPack(['uint', 'bool', 'string', 'string', 'uint'],
+            paramsHashes.push(ethers.solidityPackedKeccak256(['bytes'],
+                [ethers.solidityPacked(['uint', 'bool', 'string', 'string', 'uint'],
                     [param.tokenId, param.prepare, param.name, param.symbol, param.amount])]));
         }
         let chainCfg = this.config[requestParams.chain_name ? requestParams.chain_name : CHAIN_NAME_MUMBAI];
