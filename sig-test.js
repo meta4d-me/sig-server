@@ -1,7 +1,9 @@
 'use strict';
 
-const {ethers} = require("ethers");
+const {ethers, Contract} = require("ethers");
 const env = require("./config/env.json");
+const {CHAIN_NAME_MUMBAI} = require("./app/utils/constant");
+const M4mBaggage = require("./app/contracts/M4mBaggageWithoutRole.json");
 
 // sign game end
 let lootIds = [4];
@@ -41,3 +43,22 @@ hash = ethers.solidityPackedKeccak256(['bytes'],
         [m4m_token_id, nonce, gameId, out_component_ids])]);
 operatorSig = operatorSigningKey.sign(hash);
 console.log(operatorSig.serialized);
+
+let requestParams = {
+    m4m_token_id: '399712059115176241',
+    nonce: 1,
+    params: [{tokenId: 1, prepare: true, name: 'test', symbol: 'aaa', amount: 1}],
+    gameSignerSig: '0x7f1838f63bb1011fca9e4b34b4273686896a78256ef464dc7c3e2012C9C9f0474920ddae81f7d2C7C0503528af99db4b4059dc628cdd9c5ef0f899337face45f1c',
+}
+console.log(JSON.stringify(requestParams));
+let paramsHashes = [];
+for (const param of requestParams.params) {
+    paramsHashes.push(ethers.solidityPackedKeccak256(['bytes'],
+        [ethers.solidityPacked(['uint', 'bool', 'string', 'string', 'uint'],
+            [param.tokenId, param.prepare, param.name, param.symbol, param.amount])]));
+}
+hash = ethers.solidityPackedKeccak256(['bytes'],
+    [ethers.solidityPacked(['uint', 'uint', 'uint', `bytes32[${requestParams.params.length}]`],
+        [requestParams.m4m_token_id, 0, requestParams.nonce, paramsHashes])]);
+// 0x1b4CcB14353bA3e628d8aD4F1F5ECae9C08B82eA
+console.log(ethers.recoverAddress(hash, requestParams.gameSignerSig));
