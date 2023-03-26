@@ -278,3 +278,33 @@ returns:
   "data": "0x12123121312"
 }
 ```
+
+### Sign Version Info
+
+Method: POST
+
+URL: /api/v1/sign/version-info
+
+params:
+```json
+{
+  "chain_id": 1,
+  "nft": "0x1a8a1dfd9063eae42a2b8339966fbea388430ca4",
+  "token_id": "10",
+  "uri": "ipfs://asfdsadadasdasdadadadaddaa"
+}
+```
+
+returns:
+
+```json
+{
+  "code": 0,
+  "err": "",
+  "data": "0x12123121312"
+}
+```
+
+```json
+
+```
